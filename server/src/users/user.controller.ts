@@ -9,16 +9,17 @@ import {
   Param,
   Body,
   HttpStatus,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './user.service';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('create')
+  @Post('register')
   async createUser(
     @Res() response: Response,
     @Body() createUser: CreateUserDto,
@@ -28,7 +29,7 @@ export class UsersController {
   }
 
   @Get('all')
-  async getAllUsers(@Res() response: Response) {
+  async getAllUsers(@Req() request: Request, @Res() response: Response) {
     const users = await this.usersService.getAll();
     return response.status(HttpStatus.OK).json({ users });
   }

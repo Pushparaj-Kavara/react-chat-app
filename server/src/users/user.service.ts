@@ -29,6 +29,10 @@ export class UsersService {
     return await this.userModel.findByIdAndDelete(id);
   }
 
+  async getByCondition(condition: object): Promise<User> {
+    return await this.userModel.findOne(condition).exec();
+  }
+
   default(): string {
     throw new HttpException(
       {
