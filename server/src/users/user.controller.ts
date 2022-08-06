@@ -6,7 +6,6 @@ import {
   Delete,
   All,
   Res,
-  Param,
   Body,
   HttpStatus,
   Req,
@@ -14,6 +13,7 @@ import {
 import { UsersService } from './user.service';
 import { Request, Response } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
+import { RequestUser } from 'src/auth/requestUser';
 
 @Controller('users')
 export class UsersController {
@@ -34,25 +34,28 @@ export class UsersController {
     return response.status(HttpStatus.OK).json({ users });
   }
 
-  @Get(':id')
-  async getUserById(@Res() response: Response, @Param('id') id: string) {
-    const user = await this.usersService.getById(id);
+  @Get('me')
+  async getUserById(@Req() request: RequestUser, @Res() response: Response) {
+    const user = await this.usersService.getById(request.user.userId);
     return response.status(HttpStatus.OK).json({ user });
   }
 
-  @Put(':id')
+  @Put('me')
   async updateUser(
+    @Req() request: RequestUser,
     @Res() response: Response,
-    @Param('id') id: string,
     @Body() updateUser: CreateUserDto,
   ) {
-    const updatedUser = await this.usersService.update(id, updateUser);
+    const updatedUser = await this.usersService.update(
+      request.user.userId,
+      updateUser,
+    );
     return response.status(HttpStatus.OK).json({ updatedUser });
   }
 
-  @Delete(':id')
-  async deleteUser(@Res() response: Response, @Param('id') id: string) {
-    const deletedUser = await this.usersService.delete(id);
+  @Delete('me')
+  async deleteUser(@Req() request: RequestUser, @Res() response: Response) {
+    const deletedUser = await this.usersService.delete(request.user.userId);
     return response.status(HttpStatus.OK).json({ deletedUser });
   }
 

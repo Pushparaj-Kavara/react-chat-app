@@ -32,6 +32,15 @@
 $ npm install
 ```
 
+## Create Environment Variables
+
+Create .env file in server directory and add following variables before starting the server.
+```bash
+JWT_SECRET_KEY=secretKey
+SERVER_PORT=8050
+MONGODB_URL=mongodb://localhost/chatdb
+```
+
 ## Running the app
 
 ```bash

@@ -29,6 +29,7 @@ client/*.local
 server/dist
 server/node_modules
 server/package-lock.json
+server/.env
 
 # Logs
 logs
