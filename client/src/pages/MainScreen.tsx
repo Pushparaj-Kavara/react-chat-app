@@ -5,7 +5,7 @@ const MainScreen: React.FC = () => {
 
   return (
     <>
-
+      <h1>Hello There</h1>
     </>
   );
 }

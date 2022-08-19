@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Button, Col, Container, Form, Row } from 'react-bootstrap';
+import { Link, useNavigate, NavigateFunction } from 'react-router-dom'
+import { Button, Container, Form } from 'react-bootstrap';
 import Navigation from './Navigation';
 import { Identity } from '../models/LoginInterace'
 
 const Login: React.FC = () => {
+
+  const navigate: NavigateFunction = useNavigate();
 
   const [cred, setCred] = useState<Identity>({
     username: '',
@@ -31,8 +33,9 @@ const Login: React.FC = () => {
       if (cred.username === '' || cred.password === "")
         return alert('All fields required!')
 
-      const res: Response = await fetch(`http://localhost:5500/auth/sign-up`, {
+      const res: Response = await fetch(`http://localhost:5500/auth/sign-in`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cred)
       });
 
@@ -41,7 +44,8 @@ const Login: React.FC = () => {
       if (res.status !== 200) {
         alert(result.message);
       } else {
-        alert('Done');
+        localStorage.setItem('accesstoken', result.access_token);
+        navigate('/chat-screen');
       }
 
     } catch (err) {

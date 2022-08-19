@@ -41,17 +41,26 @@ const Register: React.FC = () => {
     }
 
     try {
-      const res: Response = await fetch(`http://localhost:5500/auth/sign-in`, {
+      const res: Response = await fetch(`http://localhost:5500/auth/sign-up`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cred)
       });
 
       const result = await res.json();
 
-      if (res.status !== 201) {
+      if (res.status !== 200) {
         alert(result.message);
       } else {
         alert(result.message + ' ' + result.username);
+        setCred(
+          {
+            username: '',
+            email: '',
+            password: ''
+          }
+        );
+        setPwd('');
       }
 
     } catch (err) {
