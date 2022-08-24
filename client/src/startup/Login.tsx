@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, NavigateFunction } from 'react-router-dom'
 import { Button, Container, Form } from 'react-bootstrap';
 import Navigation from './Navigation';
@@ -7,6 +7,12 @@ import { Identity } from '../models/LoginInterace'
 const Login: React.FC = () => {
 
   const navigate: NavigateFunction = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem('accesstoken') !== null) {
+      navigate('/chat-screen')
+    }
+  }, []);
 
   const [cred, setCred] = useState<Identity>({
     username: '',
