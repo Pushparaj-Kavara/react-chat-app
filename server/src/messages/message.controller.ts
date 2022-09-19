@@ -6,6 +6,7 @@ import {
   Delete,
   All,
   Res,
+  Req,
   Param,
   Body,
   HttpStatus,
@@ -13,6 +14,7 @@ import {
 import { Response } from 'express';
 import { MessagesService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { RequestUser } from '../auth/requestUser';
 
 @Controller('messages')
 export class MessagesController {
@@ -20,9 +22,11 @@ export class MessagesController {
 
   @Post('create')
   async createMessage(
+    @Req() request: RequestUser,
     @Res() response: Response,
     @Body() createMessage: CreateMessageDto,
   ) {
+    createMessage.sender = request.user.userId;
     const newMessage = await this.messagesService.create(createMessage);
     return response.status(HttpStatus.CREATED).json({ newMessage });
   }

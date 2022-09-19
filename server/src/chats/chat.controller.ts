@@ -1,5 +1,14 @@
-import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { Response } from 'express';
+import { RequestUser } from 'src/auth/requestUser';
 import { ChatService } from './chat.service';
 
 @Controller('chats')
@@ -7,9 +16,9 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @Post('rooms')
-  async getRooms(@Res() response: Response, @Body('userId') userId: string) {
-    const rooms = await this.chatService.getRoomsOfUser(userId);
-    return response.status(HttpStatus.CREATED).json({ rooms });
+  async getRooms(@Req() request: RequestUser, @Res() response: Response) {
+    const rooms = await this.chatService.getRoomsOfUser(request.user.userId);
+    return response.status(HttpStatus.OK).json({ rooms });
   }
 
   @Post('get-mssgs')
