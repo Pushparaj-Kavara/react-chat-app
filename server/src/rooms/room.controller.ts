@@ -6,13 +6,14 @@ import {
   Delete,
   All,
   Res,
-  Param,
   Body,
   HttpStatus,
+  Req,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { RoomsService } from './room.service';
 import { CreateRoomDto } from './dto/create-room.dto';
+import { RequestUser } from 'src/auth/requestUser';
 
 @Controller('rooms')
 export class RoomsController {
@@ -20,11 +21,24 @@ export class RoomsController {
 
   @Post('create')
   async createRoom(
+    @Req() request: RequestUser,
     @Res() response: Response,
-    @Body() createRoom: CreateRoomDto,
+    @Body() createRoom,
   ) {
-    const newRoom = await this.roomsService.create(createRoom);
-    return response.status(HttpStatus.CREATED).json({ newRoom });
+    const createRoomData: CreateRoomDto = {
+      user1: request.user.userId,
+      user2: createRoom.username,
+      time: Date.now(),
+    };
+    const newRoom = await this.roomsService.create(createRoomData);
+    if (!newRoom._id) {
+      return response
+        .status(HttpStatus.FORBIDDEN)
+        .json({ message: newRoom.message });
+    }
+    return response
+      .status(HttpStatus.CREATED)
+      .json({ message: 'New Room Created.', newRoom });
   }
 
   @Get('all')
@@ -33,25 +47,28 @@ export class RoomsController {
     return response.status(HttpStatus.OK).json({ rooms });
   }
 
-  @Get(':id')
-  async getRoomById(@Res() response: Response, @Param('id') id: string) {
-    const room = await this.roomsService.getById(id);
+  @Get('me')
+  async getRoomById(@Req() request: RequestUser, @Res() response: Response) {
+    const room = await this.roomsService.getById(request.user.userId);
     return response.status(HttpStatus.OK).json({ room });
   }
 
-  @Put(':id')
+  @Put('me')
   async updateRoom(
+    @Req() request: RequestUser,
     @Res() response: Response,
-    @Param('id') id: string,
     @Body() updateRoom: CreateRoomDto,
   ) {
-    const updatedRoom = await this.roomsService.update(id, updateRoom);
+    const updatedRoom = await this.roomsService.update(
+      request.user.userId,
+      updateRoom,
+    );
     return response.status(HttpStatus.OK).json({ updatedRoom });
   }
 
-  @Delete(':id')
-  async deleteRoom(@Res() response: Response, @Param('id') id: string) {
-    const deletedRoom = await this.roomsService.delete(id);
+  @Delete('me')
+  async deleteRoom(@Req() request: RequestUser, @Res() response: Response) {
+    const deletedRoom = await this.roomsService.delete(request.user.userId);
     return response.status(HttpStatus.OK).json({ deletedRoom });
   }
 
