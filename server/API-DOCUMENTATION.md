@@ -152,6 +152,59 @@ Response: {
 ```
 
 
+# Messages
+
+## To send a Message to a User:
+
+```
+API: /messages/create
+Method: POST
+Header: "Content-Type: application/json"
+Header: "Authorization: Bearer JWT-token"
+Body: {
+  "receiver": "_id of receiver",
+  "text": "non empty text message",
+}
+```
+
+If JWT Token is expired or not send in the header of request then, you will get following Response:
+
+```
+Http Status: 401
+Response: {
+  "message": "Unauthorized",
+}
+```
+
+If room of "receiver" and sender doesn't exist in rooms collection then, you will get following Response:
+
+```
+Http Status: 403
+Response: {
+  "message": "Room doesn't exist between sender and receiver!",
+}
+```
+
+If "text" is empty then, you will get following Response:
+
+```
+Http Status: 403
+Response: {
+  "message": "Message text should not be empty!",
+}
+```
+
+If room of "receiver" and sender is present in rooms collection and "text" is not empty then, it creates message and returns following Response:
+
+```
+Http Status: 201
+Response: {
+  "message": "New Message Created.",
+  "newRoom": { "_id": "", "sender": "", "receiver": "", text: "", "time": "" },
+}
+```
+
+
 # Chats
 
 ## To get all rooms of User:

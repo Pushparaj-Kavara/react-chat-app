@@ -28,7 +28,14 @@ export class MessagesController {
   ) {
     createMessage.sender = request.user.userId;
     const newMessage = await this.messagesService.create(createMessage);
-    return response.status(HttpStatus.CREATED).json({ newMessage });
+    if (!newMessage._id) {
+      return response
+        .status(HttpStatus.FORBIDDEN)
+        .json({ message: newMessage.message });
+    }
+    return response
+      .status(HttpStatus.CREATED)
+      .json({ message: 'New Message Created.', newMessage });
   }
 
   @Get('all')
