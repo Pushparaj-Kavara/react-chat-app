@@ -255,6 +255,24 @@ Response: {
 }
 ```
 
+If roomId is not passed in body or roomId is empty, then you will get the following Response:
+
+```
+Http Status: 401
+Response: {
+  "message": "roomId is required!",
+}
+```
+
+If room with this "roomId" doesn't exist in rooms, then you will get the following Response:
+
+```
+Http Status: 401
+Response: {
+  "message": "room doesn't exist!",
+}
+```
+
 If JWT Token is valid and roomId is valid then, you will get the following Response (messages of the room in descending order of time):
 
 ```
@@ -265,3 +283,15 @@ Response: {
 ```
 
 # More API's to be added
+
+# Default Error Response
+
+If any error is not handled in backend then it will give following Response:
+
+```
+Http Status: 500
+Response: {
+  "statusCode":500,
+  "message":"Internal server error",
+}
+```

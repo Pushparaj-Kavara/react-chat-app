@@ -24,6 +24,11 @@ export class ChatController {
   @Post('get-mssgs')
   async getChat(@Res() response: Response, @Body('roomId') roomId: string) {
     const chat = await this.chatService.getChatofRoom(roomId);
+    if (!chat[0]._id) {
+      return response
+        .status(HttpStatus.FORBIDDEN)
+        .json({ message: chat[0].message });
+    }
     return response.status(HttpStatus.OK).json({ chat });
   }
 
