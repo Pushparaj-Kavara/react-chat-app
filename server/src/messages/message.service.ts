@@ -3,15 +3,32 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Message, MessageDocument } from './schemas/message.schema';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { Room, RoomDocument } from 'src/rooms/schemas/room.schema';
 
 @Injectable()
 export class MessagesService {
   constructor(
     @InjectModel(Message.name) private messageModel: Model<MessageDocument>,
+    @InjectModel(Room.name) private roomModel: Model<RoomDocument>,
   ) {}
 
-  async create(createMessageDto: CreateMessageDto): Promise<Message> {
+  async create(createMessageDto: CreateMessageDto): Promise<any> {
     createMessageDto.time = Date.now();
+    const receiverRoom = await this.roomModel.findOne({
+      $or: [
+        { user1: createMessageDto.sender, user2: createMessageDto.receiver },
+        { user1: createMessageDto.receiver, user2: createMessageDto.sender },
+      ],
+    });
+    if (!receiverRoom) {
+      return {
+        _id: null,
+        message: "Room doesn't exist between sender and receiver!",
+      };
+    }
+    if (!createMessageDto.text) {
+      return { _id: null, message: 'Message text should not be empty!' };
+    }
     const createdMessage = new this.messageModel(createMessageDto);
     return createdMessage.save();
   }

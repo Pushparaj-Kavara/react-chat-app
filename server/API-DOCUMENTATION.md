@@ -152,6 +152,59 @@ Response: {
 ```
 
 
+# Messages
+
+## To send a Message to a User:
+
+```
+API: /messages/create
+Method: POST
+Header: "Content-Type: application/json"
+Header: "Authorization: Bearer JWT-token"
+Body: {
+  "receiver": "_id of receiver",
+  "text": "non empty text message",
+}
+```
+
+If JWT Token is expired or not send in the header of request then, you will get following Response:
+
+```
+Http Status: 401
+Response: {
+  "message": "Unauthorized",
+}
+```
+
+If room of "receiver" and sender doesn't exist in rooms collection then, you will get following Response:
+
+```
+Http Status: 403
+Response: {
+  "message": "Room doesn't exist between sender and receiver!",
+}
+```
+
+If "text" is empty then, you will get following Response:
+
+```
+Http Status: 403
+Response: {
+  "message": "Message text should not be empty!",
+}
+```
+
+If room of "receiver" and sender is present in rooms collection and "text" is not empty then, it creates message and returns following Response:
+
+```
+Http Status: 201
+Response: {
+  "message": "New Message Created.",
+  "newRoom": { "_id": "", "sender": "", "receiver": "", text: "", "time": "" },
+}
+```
+
+
 # Chats
 
 ## To get all rooms of User:
@@ -202,6 +255,24 @@ Response: {
 }
 ```
 
+If roomId is not passed in body or roomId is empty, then you will get the following Response:
+
+```
+Http Status: 401
+Response: {
+  "message": "roomId is required!",
+}
+```
+
+If room with this "roomId" doesn't exist in rooms, then you will get the following Response:
+
+```
+Http Status: 401
+Response: {
+  "message": "room doesn't exist!",
+}
+```
+
 If JWT Token is valid and roomId is valid then, you will get the following Response (messages of the room in descending order of time):
 
 ```
@@ -212,3 +283,15 @@ Response: {
 ```
 
 # More API's to be added
+
+# Default Error Response
+
+If any error is not handled in backend then it will give following Response:
+
+```
+Http Status: 500
+Response: {
+  "statusCode":500,
+  "message":"Internal server error",
+}
+```

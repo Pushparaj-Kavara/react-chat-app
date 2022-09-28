@@ -22,8 +22,14 @@ export class ChatService {
       .exec();
   }
 
-  async getChatofRoom(roomId: string): Promise<MessageDocument[]> {
+  async getChatofRoom(roomId: string): Promise<MessageDocument[] | any> {
+    if (!roomId) {
+      return [{ _id: null, message: 'roomId is required!' }];
+    }
     const room = await this.roomModel.findById(roomId).exec();
+    if (!room) {
+      return [{ _id: null, message: "room doesn't exist!" }];
+    }
     const query = {
       $or: [
         { sender: room.user1, receiver: room.user2 },
